@@ -34,6 +34,23 @@ export class AuthService {
 
     res.setHeader('Authorization', `Bearer ${accessToken}`);
 
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      // sameSite: 'strict',
+      maxAge: 15 * 60 * 1000,
+    });
+
+    // 쿠키에 refreshToken 저장 (httpOnly 옵션 사용)
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true, // 자바스크립트에서 쿠키에 접근할 수 없도록 설정
+      // secure: true, // HTTPS에서만 쿠키가 전송되도록 설정 (프로덕션 환경에서 사용 권장)
+      // sameSite: 'strict', // CSRF 공격을 방지하기 위해 같은 사이트에서만 쿠키 전송
+      maxAge: 24 * 60 * 60 * 1000, // 쿠키의 만료 시간 (1일)
+    });
+
+    // 헤더에 accessToken 추가
+    res.setHeader('Authorization', `Bearer ${accessToken}`);
+
     const responseData = { email: user.email, name: user.name, refreshToken };
 
     return res.send(AuthResponseDto.Success('로그인 성공', responseData));
