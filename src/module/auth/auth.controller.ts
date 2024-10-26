@@ -38,11 +38,11 @@ export class AuthController {
     }
   }
 
-  @ApiOperation({ summary: 'refresh token' })
+  @ApiOperation({ summary: 'refresh Token 이용한 access Token 재발급' })
   @Post('refresh-token')
   async refreshToken(@Body('refreshToken') refreshToken: string, @Res() res: Response) {
     try {
-      return this.userService.refreshToken(refreshToken, res);
+      return this.userService.renewRefreshToken(refreshToken, res);
     } catch (e) {
       return e;
     }

@@ -29,29 +29,24 @@ export class AuthService {
       throw AuthResponseDto.Fail('비밀번호가 일치하지 않습니다.');
     }
 
-    const accessToken = await this.generateToken({ userId: user.id, email: user.email, name: user.name });
-    const refreshToken = await this.generateToken({ userId: user.id, email: user.email, name: user.name });
-
-    res.setHeader('Authorization', `Bearer ${accessToken}`);
+    const accessToken = await this.generateToken({ userId: user.id, email: user.email, name: user.name }, '15m');
+    const refreshToken = await this.generateToken({ userId: user.id, email: user.email, name: user.name }, '1d');
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       // sameSite: 'strict',
-      maxAge: 15 * 60 * 1000,
+      maxAge: 60 * 1000 * 15,
     });
 
-    // 쿠키에 refreshToken 저장 (httpOnly 옵션 사용)
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: true, // 자바스크립트에서 쿠키에 접근할 수 없도록 설정
-      // secure: true, // HTTPS에서만 쿠키가 전송되도록 설정 (프로덕션 환경에서 사용 권장)
-      // sameSite: 'strict', // CSRF 공격을 방지하기 위해 같은 사이트에서만 쿠키 전송
-      maxAge: 24 * 60 * 60 * 1000, // 쿠키의 만료 시간 (1일)
+      httpOnly: true,
+      // sameSite: 'strict',
+      maxAge: 60 * 1000 * 60 * 24,
     });
 
-    // 헤더에 accessToken 추가
-    res.setHeader('Authorization', `Bearer ${accessToken}`);
+    // res.setHeader('Authorization', `Bearer ${accessToken}`);
 
-    const responseData = { email: user.email, name: user.name, refreshToken };
+    const responseData = { email: user.email, name: user.name };
 
     return res.send(AuthResponseDto.Success('로그인 성공', responseData));
   }
@@ -100,17 +95,20 @@ export class AuthService {
     return AuthResponseDto.Success('비밀번호 변경 완료', responseData);
   }
 
-  async refreshToken(refreshToken: string, res: Response) {
+  async renewRefreshToken(refreshToken: string, res: Response) {
     const payload = this.jwtService.verify(refreshToken);
 
-    const accessToken = await this.generateToken({ userId: payload.userId, email: payload.email, name: payload.name });
+    const accessToken = await this.generateToken(
+      { userId: payload.userId, email: payload.email, name: payload.name },
+      '15m',
+    );
 
     res.setHeader('Authorization', `Bearer ${accessToken}`);
 
     return res.send(AuthResponseDto.Success('토큰 재발급 성공'));
   }
 
-  private async generateToken(payload: { userId: number; email: string; name: string }) {
-    return this.jwtService.sign(payload);
+  private async generateToken(payload: { userId: number; email: string; name: string }, expiresIn: string) {
+    return this.jwtService.sign(payload, { expiresIn });
   }
 }
