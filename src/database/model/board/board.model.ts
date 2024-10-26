@@ -6,11 +6,11 @@ import { BoardStatusEnum } from '~/type/enum/board';
 
 @Entity({ name: 'board', comment: '게시판 테이블' })
 export class BoardModel {
-  @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', comment: 'boardSeq' })
-  id: number;
+  @PrimaryGeneratedColumn({ name: 'seq', type: 'bigint', comment: 'boardSeq' })
+  seq: number;
 
-  @Column({ name: 'writer_id', type: 'bigint', comment: '작성자' })
-  writer_id: number;
+  @Column({ name: 'writer_seq', type: 'bigint', comment: '작성자' })
+  writer_seq: number;
 
   @Column({ name: 'title', type: 'text', comment: '제목' })
   title: string;
@@ -29,6 +29,6 @@ export class BoardModel {
   comments: BoardCommentModel[];
 
   @ManyToOne(() => UserModel, (user) => user.boards)
-  @JoinColumn({ name: 'writer_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'writer_seq', referencedColumnName: 'seq' })
   user: UserModel;
 }

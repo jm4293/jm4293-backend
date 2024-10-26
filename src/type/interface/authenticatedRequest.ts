@@ -1,5 +1,5 @@
 import { Request } from 'express';
 
 export interface AuthenticatedRequest extends Request {
-  user?: { userId: number; email: string; name: string };
+  user?: { user_seq: number; email: string; name: string };
 }

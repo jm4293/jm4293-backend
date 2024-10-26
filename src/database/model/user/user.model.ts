@@ -4,8 +4,8 @@ import { BoardCommentModel } from '../board-comment';
 
 @Entity({ name: 'user', comment: '유저 테이블' })
 export class UserModel {
-  @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', comment: 'userSeq' })
-  id: number;
+  @PrimaryGeneratedColumn({ name: 'seq', type: 'bigint', comment: 'userSeq' })
+  seq: number;
 
   @Column({ name: 'name', type: 'text', comment: '유저 이름' })
   name: string;

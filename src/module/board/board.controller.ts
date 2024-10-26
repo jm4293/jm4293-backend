@@ -11,10 +11,10 @@ export class BoardController {
 
   @ApiOperation({ summary: '게시글 상세' })
   @UseGuards(JwtAuthGuard)
-  @Get('board-detail/:id')
-  async board(@Req() req: AuthenticatedRequest, @Param('id') id: number) {
+  @Get('board-detail/:seq')
+  async board(@Req() req: AuthenticatedRequest, @Param('seq') seq: number) {
     try {
-      return this.boardService.boardDetail(req, id);
+      return this.boardService.boardDetail(req, seq);
     } catch (e) {
       return e;
     }
@@ -55,10 +55,10 @@ export class BoardController {
 
   @ApiOperation({ summary: '게시글 삭제' })
   @UseGuards(JwtAuthGuard)
-  @Delete('board-delete/:id')
-  async boardDelete(@Req() req: AuthenticatedRequest, @Param('id') id: number) {
+  @Delete('board-delete/:seq')
+  async boardDelete(@Req() req: AuthenticatedRequest, @Param('seq') seq: number) {
     try {
-      return this.boardService.boardDelete(req, id);
+      return this.boardService.boardDelete(req, seq);
     } catch (e) {
       return e;
     }

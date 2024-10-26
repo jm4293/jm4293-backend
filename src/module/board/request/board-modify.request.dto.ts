@@ -3,10 +3,10 @@ import { Transform, Type } from 'class-transformer';
 import { IsNumber, IsString } from 'class-validator';
 
 export class BoardModifyRequestDto {
-  @ApiProperty({ description: '게시글 id', required: true })
+  @ApiProperty({ description: '게시글 seq', required: true })
   @Type(() => Number)
-  @IsNumber({}, { message: '게시글 id는 숫자여야 합니다.' })
-  id: number;
+  @IsNumber()
+  seq: number;
 
   @ApiProperty({ description: '게시글 제목', required: true })
   @Transform(({ value }) => value.trim())

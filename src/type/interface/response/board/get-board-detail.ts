@@ -1,5 +1,5 @@
 export interface IGetBoardDetail {
-  id: number;
+  seq: number;
   title: string;
   content: string;
   createdAt: Date;
