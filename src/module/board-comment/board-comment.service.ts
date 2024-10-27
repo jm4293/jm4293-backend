@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BoardCommentRepository } from '~/database/repository';
-import { AuthenticatedRequest } from '~/type/interface';
+import { AuthenticatedUserRequest } from '~/type/interface';
 import { BoardCommentCreateRequestDto } from '~/module/board-comment/request';
 import { BoardCommentResponseDto } from '~/module/board-comment/response';
 
@@ -22,7 +22,7 @@ export class BoardCommentService {
     return BoardCommentResponseDto.Success('게시글 댓글 조회 성공', filterResult);
   }
 
-  async boardCommentCreate(req: AuthenticatedRequest, body: BoardCommentCreateRequestDto) {
+  async boardCommentCreate(req: AuthenticatedUserRequest, body: BoardCommentCreateRequestDto) {
     const { user_seq } = req.user;
     const { content, boardId } = body;
 
@@ -43,7 +43,7 @@ export class BoardCommentService {
     return BoardCommentResponseDto.Success('게시글 댓글 작성 성공', result);
   }
 
-  async boardCommentDelete(req: AuthenticatedRequest, seq: number) {
+  async boardCommentDelete(req: AuthenticatedUserRequest, seq: number) {
     const { user_seq } = req.user;
 
     const boardComment = await this.boardCommentRepository.findOne(seq);

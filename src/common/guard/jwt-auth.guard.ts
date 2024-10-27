@@ -1,13 +1,13 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthenticatedRequest } from '~/type/interface';
+import { AuthenticatedUserRequest } from '~/type/interface';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const req = context.switchToHttp().getRequest<AuthenticatedRequest>();
+    const req = context.switchToHttp().getRequest<AuthenticatedUserRequest>();
     const token = this.extractTokenFromCookie(req);
 
     if (!token) {
@@ -22,7 +22,7 @@ export class JwtAuthGuard implements CanActivate {
     }
   }
 
-  private extractTokenFromHeader(request: AuthenticatedRequest): string | undefined {
+  private extractTokenFromHeader(request: AuthenticatedUserRequest): string | undefined {
     const accessToken = request.headers['authorization'];
 
     if (!accessToken) {
@@ -33,7 +33,7 @@ export class JwtAuthGuard implements CanActivate {
     return token || undefined;
   }
 
-  private extractTokenFromCookie(request: AuthenticatedRequest): string | null {
+  private extractTokenFromCookie(request: AuthenticatedUserRequest): string | null {
     const accessToken = request.cookies['accessToken'];
     return accessToken || undefined;
   }

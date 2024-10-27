@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '~/common/guard';
-import { AuthenticatedRequest } from '~/type/interface';
+import { AuthenticatedUserRequest } from '~/type/interface';
 import { BoardCommentCreateRequestDto } from '~/module/board-comment/request';
 import { BoardCommentService } from '~/module/board-comment/board-comment.service';
 
@@ -23,7 +23,7 @@ export class BoardCommentController {
   @ApiOperation({ summary: '게시글 댓글 작성' })
   @UseGuards(JwtAuthGuard)
   @Post('board-comment-create')
-  async boardCommentCreate(@Req() req: AuthenticatedRequest, @Body() body: BoardCommentCreateRequestDto) {
+  async boardCommentCreate(@Req() req: AuthenticatedUserRequest, @Body() body: BoardCommentCreateRequestDto) {
     try {
       return this.boardCommentService.boardCommentCreate(req, body);
     } catch (e) {
@@ -34,7 +34,7 @@ export class BoardCommentController {
   @ApiOperation({ summary: '게시글 댓글 삭제' })
   @UseGuards(JwtAuthGuard)
   @Delete('board-comment-delete/:seq')
-  async boardCommentDelete(@Req() req: AuthenticatedRequest, @Param('seq') seq: number) {
+  async boardCommentDelete(@Req() req: AuthenticatedUserRequest, @Param('seq') seq: number) {
     try {
       return this.boardCommentService.boardCommentDelete(req, seq);
     } catch (e) {
