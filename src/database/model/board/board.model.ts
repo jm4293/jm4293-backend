@@ -21,6 +21,9 @@ export class BoardModel {
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', comment: '생성일' })
   createdAt: Date;
 
+  @Column({ name: 'updated_at', type: 'timestamp', comment: '수정일' })
+  updatedAt: Date;
+
   @Column({ name: 'status', type: 'varchar', length: 10, comment: '상태' })
   @IsEnum(BoardStatusEnum)
   status: BoardStatusEnum;
