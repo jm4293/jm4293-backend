@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '~/common/guard';
-import { AuthenticatedRequest } from '~/type/interface';
+import { AuthenticatedUserRequest, TablePageCountRequest } from '~/type/interface';
 import { BoardCreateRequestDto, BoardModifyRequestDto } from '~/module/board/request';
 import { BoardService } from '~/module/board/board.service';
 
@@ -12,7 +12,7 @@ export class BoardController {
   @ApiOperation({ summary: '게시글 상세' })
   @UseGuards(JwtAuthGuard)
   @Get('board-detail/:seq')
-  async board(@Req() req: AuthenticatedRequest, @Param('seq') seq: number) {
+  async board(@Req() req: AuthenticatedUserRequest, @Param('seq') seq: number) {
     try {
       return this.boardService.boardDetail(req, seq);
     } catch (e) {
@@ -23,9 +23,9 @@ export class BoardController {
   @ApiOperation({ summary: '게시글 리스트' })
   @UseGuards(JwtAuthGuard)
   @Get('board-list')
-  async boardList() {
+  async boardList(@Query() query: TablePageCountRequest) {
     try {
-      return this.boardService.boardList();
+      return this.boardService.boardList(query);
     } catch (e) {
       return e;
     }
@@ -34,7 +34,7 @@ export class BoardController {
   @ApiOperation({ summary: '게시글 작성' })
   @UseGuards(JwtAuthGuard)
   @Post('board-create')
-  async boardCreate(@Req() req: AuthenticatedRequest, @Body() body: BoardCreateRequestDto) {
+  async boardCreate(@Req() req: AuthenticatedUserRequest, @Body() body: BoardCreateRequestDto) {
     try {
       return this.boardService.boardCreate(req, body);
     } catch (e) {
@@ -45,7 +45,7 @@ export class BoardController {
   @ApiOperation({ summary: '게시글 수정' })
   @UseGuards(JwtAuthGuard)
   @Patch('board-update')
-  async boardUpdate(@Req() req: AuthenticatedRequest, @Body() body: BoardModifyRequestDto) {
+  async boardUpdate(@Req() req: AuthenticatedUserRequest, @Body() body: BoardModifyRequestDto) {
     try {
       return this.boardService.boardUpdate(req, body);
     } catch (e) {
@@ -56,7 +56,7 @@ export class BoardController {
   @ApiOperation({ summary: '게시글 삭제' })
   @UseGuards(JwtAuthGuard)
   @Delete('board-delete/:seq')
-  async boardDelete(@Req() req: AuthenticatedRequest, @Param('seq') seq: number) {
+  async boardDelete(@Req() req: AuthenticatedUserRequest, @Param('seq') seq: number) {
     try {
       return this.boardService.boardDelete(req, seq);
     } catch (e) {

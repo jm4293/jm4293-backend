@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { BoardRepository } from '~/database/repository';
 import { BoardResponseDto } from '~/module/board/response';
 import { BoardCreateRequestDto, BoardModifyRequestDto } from '~/module/board/request';
-import { AuthenticatedRequest } from '~/type/interface';
+import { AuthenticatedUserRequest, TablePageCountRequest } from '~/type/interface';
 import { IGetBoardDetail, IGetBoardList } from '~/type/interface/response';
 
 @Injectable()
 export class BoardService {
   constructor(private readonly boardRepository: BoardRepository) {}
 
-  async boardDetail(req: AuthenticatedRequest, seq: number) {
+  async boardDetail(req: AuthenticatedUserRequest, seq: number) {
     const {} = req.user;
 
     const result = await this.boardRepository.findOne(seq);
@@ -30,8 +30,8 @@ export class BoardService {
     return BoardResponseDto.Success('상세 게시글 조회 성공', filterResult);
   }
 
-  async boardList() {
-    const result = await this.boardRepository.findAllWithWriter();
+  async boardList(query: TablePageCountRequest) {
+    const result = await this.boardRepository.findAllWithWriter(query);
 
     const filterResult: IGetBoardList[] = result.map((board) => ({
       seq: board.seq,
@@ -44,7 +44,7 @@ export class BoardService {
     return BoardResponseDto.Success('게시글 리스트 조회 성공', filterResult);
   }
 
-  async boardCreate(req: AuthenticatedRequest, body: BoardCreateRequestDto) {
+  async boardCreate(req: AuthenticatedUserRequest, body: BoardCreateRequestDto) {
     const { user_seq } = req.user;
     const { title, content } = body;
 
@@ -65,9 +65,9 @@ export class BoardService {
     return BoardResponseDto.Success('게시판 생성 성공', result);
   }
 
-  async boardUpdate(req: AuthenticatedRequest, body: BoardModifyRequestDto) {
+  async boardUpdate(req: AuthenticatedUserRequest, body: BoardModifyRequestDto) {
     const { user_seq } = req.user;
-    const { id, title, content } = body;
+    const { seq, title, content } = body;
 
     if (!user_seq) {
       throw BoardResponseDto.Fail('로그인이 필요합니다.');
@@ -81,7 +81,7 @@ export class BoardService {
       throw BoardResponseDto.Fail('내용을 입력해주세요.');
     }
 
-    const board = await this.boardRepository.findOne(id);
+    const board = await this.boardRepository.findOne(seq);
 
     if (!board) {
       throw BoardResponseDto.Fail('게시글이 존재하지 않습니다.');
@@ -91,12 +91,12 @@ export class BoardService {
       throw BoardResponseDto.Fail('게시글 작성자만 수정할 수 있습니다.');
     }
 
-    await this.boardRepository.updateBoard(id, body);
+    await this.boardRepository.updateBoard(seq, body);
 
     return BoardResponseDto.Success('게시글 수정 성공');
   }
 
-  async boardDelete(req: AuthenticatedRequest, seq: number) {
+  async boardDelete(req: AuthenticatedUserRequest, seq: number) {
     const { user_seq } = req.user;
 
     if (!user_seq) {

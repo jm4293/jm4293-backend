@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BoardCreateRequestDto } from '~/module/board/request';
 import { BoardStatusEnum } from '~/type/enum/board';
+import { TablePageCountRequest } from '~/type/interface';
 
 @Injectable()
 export class BoardRepository {
@@ -16,10 +17,14 @@ export class BoardRepository {
     return await this.repository.findOne({ where: { seq, status: BoardStatusEnum.ACTIVE }, relations: ['user'] });
   }
 
-  async findAllWithWriter() {
+  async findAllWithWriter(query: TablePageCountRequest) {
+    const { page, count } = query;
+
     return await this.repository.find({
       where: { status: BoardStatusEnum.ACTIVE },
       relations: ['user'],
+      skip: (page - 1) * count,
+      take: count,
       order: { seq: 'DESC' },
     });
   }
