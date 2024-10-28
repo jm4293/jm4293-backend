@@ -31,7 +31,7 @@ export class BoardService {
   }
 
   async boardList(query: TablePageCountRequest) {
-    const result = await this.boardRepository.findAllWithWriter(query);
+    const { result, totalCount } = await this.boardRepository.findAllWithWriter(query);
 
     const filterResult: IGetBoardList[] = result.map((board) => ({
       seq: board.seq,
@@ -41,7 +41,7 @@ export class BoardService {
       writer: board.user.name,
     }));
 
-    return BoardResponseDto.Success('게시글 리스트 조회 성공', filterResult);
+    return BoardResponseDto.Success('게시글 리스트 조회 성공', { list: filterResult, totalCount });
   }
 
   async boardCreate(req: AuthenticatedUserRequest, body: BoardCreateRequestDto) {

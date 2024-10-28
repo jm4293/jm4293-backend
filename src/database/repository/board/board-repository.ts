@@ -20,13 +20,15 @@ export class BoardRepository {
   async findAllWithWriter(query: TablePageCountRequest) {
     const { page, count } = query;
 
-    return await this.repository.find({
+    const [result, totalCount] = await this.repository.findAndCount({
       where: { status: BoardStatusEnum.ACTIVE },
       relations: ['user'],
       skip: (page - 1) * count,
       take: count,
       order: { seq: 'DESC' },
     });
+
+    return { result, totalCount };
   }
 
   async createBoard(user_seq: number, body: BoardCreateRequestDto) {
