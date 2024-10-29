@@ -2,7 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '~/database/repository/user';
-import { AuthChangePasswordRequestDto, AuthSignInRequestDto, AuthSignUpRequestDto } from '~/module/auth/request';
+import {
+  AuthChangePasswordRequestDto,
+  AuthFindEmailRequestDto,
+  AuthSignInRequestDto,
+  AuthSignUpRequestDto,
+  AuthVerifyIdRequestDto,
+} from '~/module/auth/request';
 
 import * as bcrypt from 'bcrypt';
 import { AuthResponseDto } from '~/module/auth/response';
@@ -76,6 +82,22 @@ export class AuthService {
     return AuthResponseDto.Success('회원가입 성공', responseData);
   }
 
+  async authId(body: AuthVerifyIdRequestDto) {
+    const { email, name } = body;
+
+    const user = await this.userRepository.findUserByEmail(email);
+
+    if (!user) {
+      throw AuthResponseDto.Fail('일치하는 사용자가 없습니다.');
+    }
+
+    if (user.name !== name) {
+      throw AuthResponseDto.Fail('일치하는 사용자가 없습니다.');
+    }
+
+    return AuthResponseDto.Success('인증 성공');
+  }
+
   async changePassword(body: AuthChangePasswordRequestDto) {
     const { email, password } = body;
 
@@ -93,6 +115,20 @@ export class AuthService {
     const responseData = { email: user.email, name: user.name };
 
     return AuthResponseDto.Success('비밀번호 변경 완료', responseData);
+  }
+
+  async findEmail(body: AuthFindEmailRequestDto) {
+    const { name } = body;
+
+    const user = await this.userRepository.findUserByName(name);
+
+    if (!user) {
+      throw AuthResponseDto.Fail('일치하는 사용자가 없습니다.');
+    }
+
+    const responseData = { name: name, email: user.email };
+
+    return AuthResponseDto.Success('이메일 찾기 성공', responseData);
   }
 
   async renewRefreshToken(refreshToken: string, res: Response) {

@@ -1,7 +1,13 @@
 import { Body, Controller, Patch, Post, Res } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { Response } from 'express';
-import { AuthChangePasswordRequestDto, AuthSignInRequestDto, AuthSignUpRequestDto } from '~/module/auth/request';
+import {
+  AuthChangePasswordRequestDto,
+  AuthFindEmailRequestDto,
+  AuthSignInRequestDto,
+  AuthSignUpRequestDto,
+  AuthVerifyIdRequestDto,
+} from '~/module/auth/request';
 import { AuthService } from '~/module/auth/auth.service';
 
 @Controller('auth')
@@ -28,11 +34,31 @@ export class AuthController {
     }
   }
 
+  @ApiOperation({ summary: '비밀번호 찾기용 아이디 인증' })
+  @Post('verify-id')
+  async authId(@Body() body: AuthVerifyIdRequestDto) {
+    try {
+      return this.userService.authId(body);
+    } catch (e) {
+      return e;
+    }
+  }
+
   @ApiOperation({ summary: '비밀번호 변경' })
   @Patch('change-password')
   async changePassword(@Body() body: AuthChangePasswordRequestDto) {
     try {
       return this.userService.changePassword(body);
+    } catch (e) {
+      return e;
+    }
+  }
+
+  @ApiOperation({ summary: '아이디 찾기' })
+  @Post('find-email')
+  async findId(@Body() body: AuthFindEmailRequestDto) {
+    try {
+      return this.userService.findEmail(body);
     } catch (e) {
       return e;
     }
