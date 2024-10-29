@@ -12,5 +12,5 @@ export class BoardCommentCreateRequestDto {
   @ApiProperty({ description: '게시글 번호', required: true })
   @Type(() => Number)
   @IsNumber()
-  boardId: number;
+  board_seq: number;
 }

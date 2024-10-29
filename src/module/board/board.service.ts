@@ -36,9 +36,9 @@ export class BoardService {
     const filterResult: IGetBoardList[] = result.map((board) => ({
       seq: board.seq,
       title: board.title,
-      content: board.content,
+      // content: board.content,
       createdAt: board.createdAt,
-      writer: board.user.name,
+      writerName: board.user.name,
     }));
 
     return BoardResponseDto.Success('게시글 리스트 조회 성공', { list: filterResult, totalCount });

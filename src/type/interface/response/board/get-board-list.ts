@@ -1,7 +1,7 @@
 export interface IGetBoardList {
   seq: number;
   title: string;
-  content: string;
+  // content: string;
   createdAt: Date;
-  writer: string;
+  writerName: string;
 }

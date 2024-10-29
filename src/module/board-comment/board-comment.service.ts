@@ -24,13 +24,13 @@ export class BoardCommentService {
 
   async boardCommentCreate(req: AuthenticatedUserRequest, body: BoardCommentCreateRequestDto) {
     const { user_seq } = req.user;
-    const { content, boardId } = body;
+    const { content, board_seq } = body;
 
     if (!user_seq) {
       throw BoardCommentResponseDto.Fail('로그인이 필요합니다.');
     }
 
-    if (!boardId) {
+    if (!board_seq) {
       throw BoardCommentResponseDto.Fail('없는 게시글입니다.');
     }
 
@@ -38,7 +38,7 @@ export class BoardCommentService {
       throw BoardCommentResponseDto.Fail('내용을 입력해주세요.');
     }
 
-    const result = this.boardCommentRepository.createBoardComment(user_seq, boardId, content);
+    const result = this.boardCommentRepository.createBoardComment(user_seq, board_seq, content);
 
     return BoardCommentResponseDto.Success('게시글 댓글 작성 성공', result);
   }
