@@ -19,6 +19,7 @@ export class BoardCommentRepository {
     return await this.repository.find({
       relations: ['user'],
       where: { board_seq, status: BoardCommentStatusEnum.ACTIVE },
+      order: { createdAt: 'ASC' },
     });
   }
 
