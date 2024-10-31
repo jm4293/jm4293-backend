@@ -40,13 +40,13 @@ export class AuthService {
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      // sameSite: 'strict',
+      sameSite: 'strict',
       maxAge: 60 * 1000 * 15,
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      // sameSite: 'strict',
+      sameSite: 'strict',
       maxAge: 60 * 1000 * 60 * 24,
     });
 
