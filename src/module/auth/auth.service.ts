@@ -35,13 +35,13 @@ export class AuthService {
       throw AuthResponseDto.Fail('비밀번호가 일치하지 않습니다.');
     }
 
-    const accessToken = await this.generateToken({ user_seq: user.seq, email: user.email, name: user.name }, '15m');
-    const refreshToken = await this.generateToken({ user_seq: user.seq, email: user.email, name: user.name }, '1d');
+    const accessToken = await this.generateToken({ user_seq: user.seq, email: user.email, name: user.name }, '1h');
+    const refreshToken = await this.generateToken({ user_seq: user.seq, email: user.email, name: user.name }, '5d');
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       // sameSite: 'strict',
-      maxAge: 60 * 1000 * 15,
+      maxAge: 60 * 1000 * 60,
     });
 
     res.cookie('refreshToken', refreshToken, {
@@ -136,12 +136,12 @@ export class AuthService {
 
     const accessToken = await this.generateToken(
       { user_seq: payload.user_seq, email: payload.email, name: payload.name },
-      '15m',
+      '1h',
     );
 
-    res.setHeader('Authorization', `Bearer ${accessToken}`);
+    // res.setHeader('Authorization', `Bearer ${accessToken}`);
 
-    return res.send(AuthResponseDto.Success('토큰 재발급 성공'));
+    return res.send(AuthResponseDto.Success('토큰 재발급 성공', { accessToken }));
   }
 
   private async generateToken(payload: { user_seq: number; email: string; name: string }, expiresIn: string) {
