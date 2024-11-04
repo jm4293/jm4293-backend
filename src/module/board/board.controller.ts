@@ -44,7 +44,7 @@ export class BoardController {
 
   @ApiOperation({ summary: '게시글 수정' })
   @UseGuards(JwtAuthGuard)
-  @Patch('board-update')
+  @Patch('board-modify')
   async boardUpdate(@Req() req: AuthenticatedUserRequest, @Body() body: BoardModifyRequestDto) {
     try {
       return this.boardService.boardUpdate(req, body);
