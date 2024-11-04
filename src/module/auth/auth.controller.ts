@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Put, Res } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { Response } from 'express';
 import {
@@ -45,7 +45,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '비밀번호 변경' })
-  @Patch('change-password')
+  @Put('change-password')
   async changePassword(@Body() body: AuthChangePasswordRequestDto) {
     try {
       return this.userService.changePassword(body);
