@@ -6,8 +6,8 @@ import { BoardCommentStatusEnum } from '~/type/enum/board-comment';
 
 @Entity({ name: 'board_comment', comment: '게시판 댓글 테이블' })
 export class BoardCommentModel {
-  @PrimaryGeneratedColumn({ name: 'seq', type: 'bigint', comment: 'boardCommentSeq' })
-  seq: number;
+  @PrimaryGeneratedColumn({ name: 'board_comment_seq', type: 'bigint', comment: 'boardCommentSeq' })
+  boardCommentSeq: number;
 
   @Column({ name: 'user_seq', type: 'bigint', comment: 'userSeq' })
   user_seq: number;
@@ -25,7 +25,7 @@ export class BoardCommentModel {
   @IsEnum(BoardCommentStatusEnum)
   status: BoardCommentStatusEnum;
 
-  @ManyToOne(() => UserModel, (user) => user.comments)
+  @ManyToOne(() => UserModel, (user) => user.commentList)
   @JoinColumn({ name: 'user_seq' })
   user: UserModel;
 

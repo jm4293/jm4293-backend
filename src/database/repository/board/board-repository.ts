@@ -14,7 +14,10 @@ export class BoardRepository {
   ) {}
 
   async findOne(seq: number) {
-    return await this.repository.findOne({ where: { seq, status: BoardStatusEnum.ACTIVE }, relations: ['user'] });
+    return await this.repository.findOne({
+      where: { boardSeq: seq, status: BoardStatusEnum.ACTIVE },
+      relations: ['user'],
+    });
   }
 
   async findAllWithWriter(query: TablePageCountRequest) {
@@ -25,22 +28,22 @@ export class BoardRepository {
       relations: ['user'],
       skip: (page - 1) * count,
       take: count,
-      order: { seq: 'DESC' },
+      order: { boardSeq: 'DESC' },
     });
 
     return { result, totalCount };
   }
 
-  async createBoard(user_seq: number, body: BoardCreateRequestDto) {
-    const board = this.repository.create({ ...body, writer_seq: user_seq });
+  async createBoard(userSeq: number, body: BoardCreateRequestDto) {
+    const board = this.repository.create({ ...body, userSeq });
     return await this.repository.save(board);
   }
 
-  async updateBoard(seq: number, body: BoardCreateRequestDto) {
-    return await this.repository.update({ seq }, body);
+  async updateBoard(boardSeq: number, body: BoardCreateRequestDto) {
+    return await this.repository.update({ boardSeq }, body);
   }
 
   async deleteBoard(seq: number) {
-    return await this.repository.update({ seq }, { status: BoardStatusEnum.DELETED });
+    return await this.repository.update({ boardSeq: seq }, { status: BoardStatusEnum.DELETED });
   }
 }

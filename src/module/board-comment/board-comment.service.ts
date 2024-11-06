@@ -12,7 +12,7 @@ export class BoardCommentService {
     const result = await this.boardCommentRepository.findAll(board_seq);
 
     const filterResult = result.map((comment) => ({
-      seq: comment.seq,
+      seq: comment.boardCommentSeq,
       content: comment.content,
       createdAt: comment.createdAt,
       email: comment.user.email,
@@ -23,10 +23,10 @@ export class BoardCommentService {
   }
 
   async boardCommentCreate(req: AuthenticatedUserRequest, body: BoardCommentCreateRequestDto) {
-    const { user_seq } = req.user;
+    const { userSeq } = req.user;
     const { content, board_seq } = body;
 
-    if (!user_seq) {
+    if (!userSeq) {
       throw BoardCommentResponseDto.Fail('로그인이 필요합니다.');
     }
 
@@ -38,13 +38,13 @@ export class BoardCommentService {
       throw BoardCommentResponseDto.Fail('내용을 입력해주세요.');
     }
 
-    const result = this.boardCommentRepository.createBoardComment(user_seq, board_seq, content);
+    const result = this.boardCommentRepository.createBoardComment(userSeq, board_seq, content);
 
     return BoardCommentResponseDto.Success('게시글 댓글 작성 성공', result);
   }
 
   async boardCommentDelete(req: AuthenticatedUserRequest, seq: number) {
-    const { user_seq } = req.user;
+    const { userSeq } = req.user;
 
     const boardComment = await this.boardCommentRepository.findOne(seq);
 
@@ -52,7 +52,7 @@ export class BoardCommentService {
       throw BoardCommentResponseDto.Fail('없는 댓글입니다.');
     }
 
-    if (boardComment.user_seq !== user_seq) {
+    if (boardComment.user_seq !== userSeq) {
       throw BoardCommentResponseDto.Fail('본인의 댓글만 삭제할 수 있습니다.');
     }
 

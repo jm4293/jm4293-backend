@@ -12,7 +12,7 @@ export class BoardCommentRepository {
   ) {}
 
   async findOne(seq: number) {
-    return await this.repository.findOne({ where: { seq } });
+    return await this.repository.findOne({ where: { boardCommentSeq: seq } });
   }
 
   async findAll(board_seq: number) {
@@ -29,6 +29,6 @@ export class BoardCommentRepository {
   }
 
   async deleteBoardComment(seq: number) {
-    return await this.repository.update({ seq }, { status: BoardCommentStatusEnum.DELETED });
+    return await this.repository.update({ boardCommentSeq: seq }, { status: BoardCommentStatusEnum.DELETED });
   }
 }

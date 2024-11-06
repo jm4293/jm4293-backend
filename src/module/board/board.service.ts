@@ -19,7 +19,7 @@ export class BoardService {
     }
 
     const filterResult: IGetBoardDetail = {
-      seq: result.seq,
+      seq: result.boardSeq,
       title: result.title,
       content: result.content,
       createdAt: result.createdAt,
@@ -34,7 +34,7 @@ export class BoardService {
     const { result, totalCount } = await this.boardRepository.findAllWithWriter(query);
 
     const filterResult: IGetBoardList[] = result.map((board) => ({
-      seq: board.seq,
+      seq: board.boardSeq,
       title: board.title,
       // content: board.content,
       createdAt: board.createdAt,
@@ -45,10 +45,10 @@ export class BoardService {
   }
 
   async boardCreate(req: AuthenticatedUserRequest, body: BoardCreateRequestDto) {
-    const { user_seq } = req.user;
+    const { userSeq } = req.user;
     const { title, content } = body;
 
-    if (!user_seq) {
+    if (!userSeq) {
       throw BoardResponseDto.Fail('로그인이 필요합니다.');
     }
 
@@ -60,16 +60,16 @@ export class BoardService {
       throw BoardResponseDto.Fail('내용을 입력해주세요.');
     }
 
-    const result = await this.boardRepository.createBoard(user_seq, body);
+    const result = await this.boardRepository.createBoard(userSeq, body);
 
     return BoardResponseDto.Success('게시판 생성 성공', result);
   }
 
   async boardUpdate(req: AuthenticatedUserRequest, body: BoardModifyRequestDto) {
-    const { user_seq } = req.user;
-    const { seq, title, content } = body;
+    const { userSeq } = req.user;
+    const { boardSeq, title, content } = body;
 
-    if (!user_seq) {
+    if (!userSeq) {
       throw BoardResponseDto.Fail('로그인이 필요합니다.');
     }
 
@@ -81,25 +81,25 @@ export class BoardService {
       throw BoardResponseDto.Fail('내용을 입력해주세요.');
     }
 
-    const board = await this.boardRepository.findOne(seq);
+    const board = await this.boardRepository.findOne(boardSeq);
 
     if (!board) {
       throw BoardResponseDto.Fail('게시글이 존재하지 않습니다.');
     }
 
-    if (board.writer_seq !== user_seq) {
+    if (board.userSeq !== userSeq) {
       throw BoardResponseDto.Fail('게시글 작성자만 수정할 수 있습니다.');
     }
 
-    await this.boardRepository.updateBoard(seq, body);
+    await this.boardRepository.updateBoard(boardSeq, body);
 
     return BoardResponseDto.Success('게시글 수정 성공');
   }
 
   async boardDelete(req: AuthenticatedUserRequest, seq: number) {
-    const { user_seq } = req.user;
+    const { userSeq } = req.user;
 
-    if (!user_seq) {
+    if (!userSeq) {
       throw BoardResponseDto.Fail('로그인이 필요합니다.');
     }
 
@@ -109,7 +109,7 @@ export class BoardService {
       throw BoardResponseDto.Fail('게시글이 존재하지 않습니다.');
     }
 
-    if (board.writer_seq !== user_seq) {
+    if (board.userSeq !== userSeq) {
       throw BoardResponseDto.Fail('게시글 작성자만 삭제할 수 있습니다.');
     }
 

@@ -6,7 +6,7 @@ export class BoardModifyRequestDto {
   @ApiProperty({ description: '게시글 seq', required: true })
   @Type(() => Number)
   @IsNumber()
-  seq: number;
+  boardSeq: number;
 
   @ApiProperty({ description: '게시글 제목', required: true })
   @Transform(({ value }) => value.trim())

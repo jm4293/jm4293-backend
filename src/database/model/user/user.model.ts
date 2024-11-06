@@ -6,8 +6,8 @@ import { AuthStatusEnum } from '~/type/enum/auth';
 
 @Entity({ name: 'user', comment: '유저 테이블' })
 export class UserModel {
-  @PrimaryGeneratedColumn({ name: 'seq', type: 'bigint', comment: 'userSeq' })
-  seq: number;
+  @PrimaryGeneratedColumn({ name: 'user_seq', type: 'bigint', comment: 'userSeq' })
+  userSeq: number;
 
   @Column({ name: 'name', type: 'text', comment: '유저 이름' })
   name: string;
@@ -29,8 +29,8 @@ export class UserModel {
   status: AuthStatusEnum;
 
   @OneToMany(() => BoardModel, (board) => board.user)
-  boards: BoardModel[];
+  boardList: BoardModel[];
 
   @OneToMany(() => BoardCommentModel, (comment) => comment.user)
-  comments: BoardCommentModel[];
+  commentList: BoardCommentModel[];
 }
