@@ -7,6 +7,7 @@ import { BoardModule } from '~/module/board';
 import { BoardCommentModule } from '~/module/board-comment';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ChattingModule } from '~/module/chatting';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AppService } from './app.service';
     AuthModule,
     BoardModule,
     BoardCommentModule,
+    ChattingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
