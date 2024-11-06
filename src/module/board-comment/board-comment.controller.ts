@@ -11,10 +11,10 @@ export class BoardCommentController {
 
   @ApiOperation({ summary: '게시글 댓글 리스트' })
   @UseGuards(JwtAuthGuard)
-  @Get('board-comment-list/:board_seq')
-  async boardCommentList(@Param('board_seq') board_seq: number) {
+  @Get('board-comment-list/:boardSeq')
+  async boardCommentList(@Param('boardSeq') boardSeq: number) {
     try {
-      return this.boardCommentService.boardCommentList(board_seq);
+      return this.boardCommentService.boardCommentList(boardSeq);
     } catch (e) {
       return e;
     }
@@ -33,10 +33,10 @@ export class BoardCommentController {
 
   @ApiOperation({ summary: '게시글 댓글 삭제' })
   @UseGuards(JwtAuthGuard)
-  @Delete('board-comment-delete/:seq')
-  async boardCommentDelete(@Req() req: AuthenticatedUserRequest, @Param('seq') seq: number) {
+  @Delete('board-comment-delete/:boardCommentSeq')
+  async boardCommentDelete(@Req() req: AuthenticatedUserRequest, @Param('boardCommentSeq') boardCommentSeq: number) {
     try {
-      return this.boardCommentService.boardCommentDelete(req, seq);
+      return this.boardCommentService.boardCommentDelete(req, boardCommentSeq);
     } catch (e) {
       return e;
     }

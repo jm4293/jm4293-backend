@@ -10,10 +10,10 @@ export class BoardCommentModel {
   boardCommentSeq: number;
 
   @Column({ name: 'user_seq', type: 'bigint', comment: 'userSeq' })
-  user_seq: number;
+  userSeq: number;
 
   @Column({ name: 'board_seq', type: 'bigint', comment: 'boardSeq' })
-  board_seq: number;
+  boardSeq: number;
 
   @Column({ type: 'varchar', length: 500, comment: '댓글 내용' })
   content: string;

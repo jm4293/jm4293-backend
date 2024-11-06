@@ -11,24 +11,24 @@ export class BoardCommentRepository {
     private readonly repository: Repository<BoardCommentModel>,
   ) {}
 
-  async findOne(seq: number) {
-    return await this.repository.findOne({ where: { boardCommentSeq: seq } });
+  async findOne(boardCommentSeq: number) {
+    return await this.repository.findOne({ where: { boardCommentSeq } });
   }
 
-  async findAll(board_seq: number) {
+  async findAll(boardSeq: number) {
     return await this.repository.find({
       relations: ['user'],
-      where: { board_seq, status: BoardCommentStatusEnum.ACTIVE },
+      where: { boardSeq, status: BoardCommentStatusEnum.ACTIVE },
       order: { createdAt: 'ASC' },
     });
   }
 
-  async createBoardComment(user_seq: number, board_seq: number, content: string) {
-    const boardComment = this.repository.create({ content, user_seq, board_seq });
+  async createBoardComment(userSeq: number, boardSeq: number, content: string) {
+    const boardComment = this.repository.create({ content, userSeq, boardSeq });
     return await this.repository.save(boardComment);
   }
 
-  async deleteBoardComment(seq: number) {
-    return await this.repository.update({ boardCommentSeq: seq }, { status: BoardCommentStatusEnum.DELETED });
+  async deleteBoardComment(boardCommentSeq: number) {
+    return await this.repository.update({ boardCommentSeq }, { status: BoardCommentStatusEnum.DELETED });
   }
 }

@@ -13,9 +13,9 @@ export class BoardRepository {
     private readonly repository: Repository<BoardModel>,
   ) {}
 
-  async findOne(seq: number) {
+  async findOne(boardSeq: number) {
     return await this.repository.findOne({
-      where: { boardSeq: seq, status: BoardStatusEnum.ACTIVE },
+      where: { boardSeq, status: BoardStatusEnum.ACTIVE },
       relations: ['user'],
     });
   }
@@ -43,7 +43,7 @@ export class BoardRepository {
     return await this.repository.update({ boardSeq }, body);
   }
 
-  async deleteBoard(seq: number) {
-    return await this.repository.update({ boardSeq: seq }, { status: BoardStatusEnum.DELETED });
+  async deleteBoard(boardSeq: number) {
+    return await this.repository.update({ boardSeq }, { status: BoardStatusEnum.DELETED });
   }
 }

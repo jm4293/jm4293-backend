@@ -9,10 +9,10 @@ import { IGetBoardDetail, IGetBoardList } from '~/type/interface/response';
 export class BoardService {
   constructor(private readonly boardRepository: BoardRepository) {}
 
-  async boardDetail(req: AuthenticatedUserRequest, seq: number) {
+  async boardDetail(req: AuthenticatedUserRequest, boardSeq: number) {
     const {} = req.user;
 
-    const result = await this.boardRepository.findOne(seq);
+    const result = await this.boardRepository.findOne(boardSeq);
 
     if (!result) {
       throw BoardResponseDto.Fail('게시글이 존재하지 않습니다.');
@@ -96,14 +96,14 @@ export class BoardService {
     return BoardResponseDto.Success('게시글 수정 성공');
   }
 
-  async boardDelete(req: AuthenticatedUserRequest, seq: number) {
+  async boardDelete(req: AuthenticatedUserRequest, boardSeq: number) {
     const { userSeq } = req.user;
 
     if (!userSeq) {
       throw BoardResponseDto.Fail('로그인이 필요합니다.');
     }
 
-    const board = await this.boardRepository.findOne(seq);
+    const board = await this.boardRepository.findOne(boardSeq);
 
     if (!board) {
       throw BoardResponseDto.Fail('게시글이 존재하지 않습니다.');
@@ -113,7 +113,7 @@ export class BoardService {
       throw BoardResponseDto.Fail('게시글 작성자만 삭제할 수 있습니다.');
     }
 
-    await this.boardRepository.deleteBoard(seq);
+    await this.boardRepository.deleteBoard(boardSeq);
 
     return BoardResponseDto.Success('게시글 삭제 성공');
   }
