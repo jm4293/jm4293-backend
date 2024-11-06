@@ -1,8 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { UserModel } from '../user';
-import { BoardModel } from '../board';
 import { IsEnum } from 'class-validator';
 import { BoardCommentStatusEnum } from '~/type/enum/board-comment';
+import { BoardModel, UserModel } from '~/database/model';
 
 @Entity({ name: 'board_comment', comment: '게시판 댓글 테이블' })
 export class BoardCommentModel {
@@ -25,7 +24,7 @@ export class BoardCommentModel {
   @IsEnum(BoardCommentStatusEnum)
   status: BoardCommentStatusEnum;
 
-  @ManyToOne(() => UserModel, (user) => user.commentList)
+  @ManyToOne(() => UserModel, (user) => user.boardCommentList)
   @JoinColumn({ name: 'user_seq' })
   user: UserModel;
 

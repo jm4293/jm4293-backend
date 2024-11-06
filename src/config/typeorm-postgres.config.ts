@@ -1,6 +1,6 @@
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { BoardCommentModel, BoardModel, UserModel } from '~/database/model';
+import { BoardCommentModel, BoardModel, ChattingModel, UserModel } from '~/database/model';
 
 export const typeormPostgresConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -12,7 +12,7 @@ export const typeormPostgresConfig: TypeOrmModuleAsyncOptions = {
     username: configService.get<string>('SUPABASE_POSTGRES_USER_NAME'),
     password: configService.get<string>('SUPABASE_POSTGRES_PASSWORD'),
     database: configService.get<string>('SUPABASE_POSTGRES_DB_NAME'),
-    entities: [UserModel, BoardModel, BoardCommentModel],
+    entities: [UserModel, BoardModel, BoardCommentModel, ChattingModel],
     synchronize: false,
   }),
 };

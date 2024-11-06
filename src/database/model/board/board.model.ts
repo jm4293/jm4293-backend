@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserModel } from '../user';
-import { BoardCommentModel } from '../board-comment';
 import { IsEnum } from 'class-validator';
 import { BoardStatusEnum } from '~/type/enum/board';
+import { BoardCommentModel } from '~/database/model';
 
 @Entity({ name: 'board', comment: '게시판 테이블' })
 export class BoardModel {

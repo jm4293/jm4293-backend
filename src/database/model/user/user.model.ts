@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BoardModel } from '../board';
-import { BoardCommentModel } from '../board-comment';
 import { IsEnum } from 'class-validator';
 import { AuthStatusEnum } from '~/type/enum/auth';
+import { BoardCommentModel, ChattingModel } from '~/database/model';
 
 @Entity({ name: 'user', comment: '유저 테이블' })
 export class UserModel {
@@ -31,6 +31,9 @@ export class UserModel {
   @OneToMany(() => BoardModel, (board) => board.user)
   boardList: BoardModel[];
 
-  @OneToMany(() => BoardCommentModel, (comment) => comment.user)
-  commentList: BoardCommentModel[];
+  @OneToMany(() => BoardCommentModel, (boardComment) => boardComment.user)
+  boardCommentList: BoardCommentModel[];
+
+  @OneToMany(() => ChattingModel, (chatting) => chatting.user)
+  chattingList: ChattingModel[];
 }

@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '~/database';
 import { BoardController } from '~/module/board/board.controller';
 import { BoardService } from '~/module/board/board.service';
-import { AuthModule } from '~/module/auth';
+import { DatabaseModule } from '~/database/database.module';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtModuleConfig } from '~/config';
 
 @Module({
-  imports: [DatabaseModule, AuthModule],
+  imports: [DatabaseModule, JwtModule.registerAsync(jwtModuleConfig)],
   controllers: [BoardController],
   providers: [BoardService],
 })
