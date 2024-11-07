@@ -1,4 +1,13 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { UserModel } from '../user';
 import { IsEnum } from 'class-validator';
 import { BoardStatusEnum } from '~/type/enum/board';
@@ -18,10 +27,10 @@ export class BoardModel {
   @Column({ name: 'content', type: 'text', comment: '내용' })
   content: string;
 
-  @Column({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', comment: '생성일' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp', comment: '생성일' })
   createdAt: Date;
 
-  @Column({ name: 'updated_at', type: 'timestamp', comment: '수정일' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', comment: '수정일' })
   updatedAt: Date;
 
   @Column({ name: 'status', type: 'varchar', length: 10, comment: '상태' })
