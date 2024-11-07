@@ -1,10 +1,14 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthenticatedUserRequest } from '~/type/interface';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
 
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest<AuthenticatedUserRequest>();
@@ -15,7 +19,7 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     try {
-      req.user = this.jwtService.verify(token);
+      req.user = this.jwtService.verify(token, this.configService.get('JWT_SECRET_KEY'));
       return true;
     } catch (e) {
       throw new UnauthorizedException('토큰이 유효하지 않습니다.');
