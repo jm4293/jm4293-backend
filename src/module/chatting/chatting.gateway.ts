@@ -66,9 +66,8 @@ export class ChattingGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   @SubscribeMessage('message')
   handleMessage(@MessageBody() message: string, @ConnectedSocket() client: Socket) {
     console.log(
-      `유저 정보: ${client.data.userSeq} | ${client.data.email} | ${client.data.name} 받은 메시지: ${message}`,
+      `유저 정보: ${client.data.userSeq} | ${client.data.email} | ${client.data.name} / 받은 메시지: ${message}`,
     );
-    console.log('보낸 사용자 정보:', client.data.userSeq);
 
     client.broadcast.emit('message', message);
   }
