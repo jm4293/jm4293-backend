@@ -44,6 +44,8 @@ export class ChattingGateway implements OnGatewayInit, OnGatewayConnection, OnGa
     }
 
     client.data.userSeq = verifiedAccessToken['userSeq'];
+    client.data.email = verifiedAccessToken['email'];
+    client.data.name = verifiedAccessToken['name'];
 
     // jwt 검증을 통한 인증 작업 로직 시작
 
@@ -63,7 +65,9 @@ export class ChattingGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
   @SubscribeMessage('message')
   handleMessage(@MessageBody() message: string, @ConnectedSocket() client: Socket) {
-    console.log('받은 메시지:', message);
+    console.log(
+      `유저 정보: ${client.data.userSeq} | ${client.data.email} | ${client.data.name} 받은 메시지: ${message}`,
+    );
     console.log('보낸 사용자 정보:', client.data.userSeq);
 
     client.broadcast.emit('message', message);
