@@ -69,7 +69,7 @@ export class ChattingGateway implements OnGatewayInit, OnGatewayConnection, OnGa
       `유저 정보: ${client.data.userSeq} | ${client.data.email} | ${client.data.name} / 받은 메시지: ${message}`,
     );
 
-    client.broadcast.emit('message', message);
+    client.broadcast.emit('message', { message, name: client.data.name });
   }
 
   private addClient(client: any) {
