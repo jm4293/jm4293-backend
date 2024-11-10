@@ -8,6 +8,7 @@ import { BoardCommentModule } from '~/module/board-comment';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ChattingModule } from '~/module/chatting';
+import { RedisModule } from '~/module/redis';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ChattingModule } from '~/module/chatting';
     BoardModule,
     BoardCommentModule,
     ChattingModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
