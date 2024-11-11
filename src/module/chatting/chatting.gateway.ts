@@ -9,10 +9,10 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ConfigService } from '@nestjs/config';
 import { Inject, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import Redis from 'ioredis';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @WebSocketGateway(8081, { namespace: 'socket/chatting', transports: ['websocket'] })
 export class ChattingGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -22,16 +22,15 @@ export class ChattingGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   private readonly logger = new Logger(ChattingGateway.name);
 
   constructor(
-    private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-    @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
+    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
   ) {}
 
   private connectedClients: Socket[] = [];
 
   async afterInit(server: Server) {
     console.log('socket server init', server);
-    await this.redisClient.set('test', 'test999999');
+    await this.cacheService.set('test', '11111232fdffsgfdgfdgf');
   }
 
   handleConnection(@ConnectedSocket() client: Socket) {
@@ -68,10 +67,10 @@ export class ChattingGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() message: string, @ConnectedSocket() client: Socket) {
-    const getTest = await this.redisClient.get('test');
+    const getTest = await this.cacheService.get('test');
 
     console.log(
-      `유저 정보: ${client.data.userSeq} | ${client.data.email} | ${client.data.name} / 받은 메시지: ${message} | redis test: ${getTest}`,
+      `유저 정보: ${client.data.userSeq} | ${client.data.email} | ${client.data.name} / 받은 메시지: ${message} | getTest: ${getTest}`,
     );
 
     client.broadcast.emit('message', { message, name: client.data.name });
