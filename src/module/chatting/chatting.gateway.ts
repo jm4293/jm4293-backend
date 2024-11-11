@@ -13,6 +13,7 @@ import { Inject, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { ChattingRepository } from '~/database/repository';
 
 @WebSocketGateway(8081, { namespace: 'socket/chatting', transports: ['websocket'] })
 export class ChattingGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -23,6 +24,7 @@ export class ChattingGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
   constructor(
     private readonly jwtService: JwtService,
+    private readonly chattingRepository: ChattingRepository,
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
   ) {}
 
@@ -72,6 +74,8 @@ export class ChattingGateway implements OnGatewayInit, OnGatewayConnection, OnGa
     console.log(
       `유저 정보: ${client.data.userSeq} | ${client.data.email} | ${client.data.name} / 받은 메시지: ${message} | getTest: ${getTest}`,
     );
+
+    await this.chattingRepository.createChatting(client.data.userSeq, { content: message });
 
     client.broadcast.emit('message', { message, name: client.data.name });
   }
