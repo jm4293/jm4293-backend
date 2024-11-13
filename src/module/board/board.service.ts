@@ -9,9 +9,7 @@ import { IGetBoardDetail, IGetBoardList } from '~/type/interface/response';
 export class BoardService {
   constructor(private readonly boardRepository: BoardRepository) {}
 
-  async boardDetail(req: AuthenticatedUserRequest, boardSeq: number) {
-    const {} = req.user;
-
+  async boardDetail(boardSeq: number) {
     const result = await this.boardRepository.findOne(boardSeq);
 
     if (!result) {

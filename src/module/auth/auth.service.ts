@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '~/database/repository/user';
 import {
@@ -12,10 +12,18 @@ import {
 
 import * as bcrypt from 'bcrypt';
 import { AuthResponseDto } from '~/module/auth/response';
+import {
+  ACCESS_TOKEN_COOKIE_TIME,
+  ACCESS_TOKEN_TIME,
+  REFRESH_TOKEN_COOKIE_TIME,
+  REFRESH_TOKEN_TIME,
+} from '~/common/constant';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly configService: ConfigService,
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
   ) {}
@@ -35,24 +43,30 @@ export class AuthService {
       throw AuthResponseDto.Fail('비밀번호가 일치하지 않습니다.');
     }
 
-    const accessToken = await this.generateToken({ userSeq: user.userSeq, email: user.email, name: user.name }, '1h');
-    const refreshToken = await this.generateToken({ userSeq: user.userSeq, email: user.email, name: user.name }, '5d');
+    const accessToken = await this.generateToken(
+      { userSeq: user.userSeq, email: user.email, name: user.name },
+      ACCESS_TOKEN_TIME,
+    );
+    const refreshToken = await this.generateToken(
+      { userSeq: user.userSeq, email: user.email, name: user.name },
+      REFRESH_TOKEN_TIME,
+    );
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       // sameSite: 'strict',
-      maxAge: 60 * 1000 * 60,
+      maxAge: ACCESS_TOKEN_COOKIE_TIME,
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       // sameSite: 'strict',
-      maxAge: 60 * 1000 * 60 * 24,
+      maxAge: REFRESH_TOKEN_COOKIE_TIME,
     });
 
     // res.setHeader('Authorization', `Bearer ${accessToken}`);
 
-    const responseData = { email: user.email, name: user.name };
+    const responseData = { email: user.email, name: user.name, refreshToken };
 
     return res.send(AuthResponseDto.Success('로그인 성공', responseData));
   }
@@ -132,16 +146,36 @@ export class AuthService {
   }
 
   async renewRefreshToken(refreshToken: string, res: Response) {
-    const payload = this.jwtService.verify(refreshToken);
+    const secret = this.configService.get('JWT_SECRET_KEY');
 
-    const accessToken = await this.generateToken(
-      { userSeq: payload.user_seq, email: payload.email, name: payload.name },
-      '1h',
-    );
+    if (!refreshToken) {
+      throw AuthResponseDto.Fail('토큰이 존재하지 않습니다.');
+    }
 
-    // res.setHeader('Authorization', `Bearer ${accessToken}`);
+    try {
+      const payload = this.jwtService.verify(refreshToken);
 
-    return res.send(AuthResponseDto.Success('토큰 재발급 성공', { accessToken }));
+      if (!payload) {
+        throw AuthResponseDto.Fail('토큰이 만료되었습니다.');
+      }
+
+      const accessToken = await this.generateToken(
+        { userSeq: payload.userSeq, email: payload.email, name: payload.name },
+        ACCESS_TOKEN_TIME,
+      );
+
+      // res.setHeader('Authorization', `Bearer ${accessToken}`);
+
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        // sameSite: 'strict',
+        maxAge: ACCESS_TOKEN_COOKIE_TIME,
+      });
+
+      return res.send(AuthResponseDto.Success('토큰 재발급 성공', { accessToken }));
+    } catch (err) {
+      throw AuthResponseDto.Fail('토큰이 만료되었습니다.');
+    }
   }
 
   private async generateToken(payload: { userSeq: number; email: string; name: string }, expiresIn: string) {

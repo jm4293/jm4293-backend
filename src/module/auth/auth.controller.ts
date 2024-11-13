@@ -1,6 +1,6 @@
-import { Body, Controller, Post, Put, Res } from '@nestjs/common';
+import { Body, Controller, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import {
   AuthChangePasswordRequestDto,
   AuthFindEmailRequestDto,
@@ -9,6 +9,7 @@ import {
   AuthVerifyIdRequestDto,
 } from '~/module/auth/request';
 import { AuthService } from '~/module/auth/auth.service';
+import { JwtAuthGuard } from '~/common/guard';
 
 @Controller('auth')
 export class AuthController {

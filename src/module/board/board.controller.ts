@@ -10,18 +10,18 @@ export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
   @ApiOperation({ summary: '게시글 상세' })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('board-detail/:boardSeq')
-  async board(@Req() req: AuthenticatedUserRequest, @Param('boardSeq') boardSeq: number) {
+  async board(@Param('boardSeq') boardSeq: number) {
     try {
-      return this.boardService.boardDetail(req, boardSeq);
+      return this.boardService.boardDetail(boardSeq);
     } catch (e) {
       return e;
     }
   }
 
   @ApiOperation({ summary: '게시글 리스트' })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('board-list')
   async boardList(@Query() query: TablePageCountRequest) {
     try {
