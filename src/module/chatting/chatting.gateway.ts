@@ -40,22 +40,22 @@ export class ChattingGateway implements OnGatewayInit, OnGatewayConnection, OnGa
       client.handshake.headers.cookie.split('; ').map((cookie) => cookie.split('=')),
     )['accessToken'];
 
-    const verifiedAccessToken = this.jwtService.verify(accessToken);
+    try {
+      const verifiedAccessToken = this.jwtService.verify(accessToken);
 
-    if (!verifiedAccessToken) {
+      // jwt 검증을 통한 인증 작업 로직 시작
+
+      client.data.userSeq = verifiedAccessToken['userSeq'];
+      client.data.email = verifiedAccessToken['email'];
+      client.data.name = verifiedAccessToken['name'];
+
+      const socketId = client.id;
+      console.log('클라이언트가 연결되었습니다:', socketId, verifiedAccessToken);
+      this.addClient(socketId);
+    } catch (error) {
       this.logger.error(`${client.id} 연결 강제 종료, status: 401, 토큰이 유효하지 않습니다.`);
-      return;
+      client.disconnect();
     }
-
-    client.data.userSeq = verifiedAccessToken['userSeq'];
-    client.data.email = verifiedAccessToken['email'];
-    client.data.name = verifiedAccessToken['name'];
-
-    // jwt 검증을 통한 인증 작업 로직 시작
-
-    const socketId = client.id;
-    console.log('클라이언트가 연결되었습니다:', socketId, verifiedAccessToken);
-    this.addClient(socketId);
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {

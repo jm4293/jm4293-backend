@@ -1,15 +1,15 @@
-import { Body, Controller, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Put, Req, Res } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import {
   AuthChangePasswordRequestDto,
   AuthFindEmailRequestDto,
+  AuthSignInOauthNaverDto,
   AuthSignInRequestDto,
   AuthSignUpRequestDto,
   AuthVerifyIdRequestDto,
 } from '~/module/auth/request';
 import { AuthService } from '~/module/auth/auth.service';
-import { JwtAuthGuard } from '~/common/guard';
 
 @Controller('auth')
 export class AuthController {
@@ -70,6 +70,16 @@ export class AuthController {
   async refreshToken(@Body('refreshToken') refreshToken: string, @Res() res: Response) {
     try {
       return this.userService.renewRefreshToken(refreshToken, res);
+    } catch (e) {
+      return e;
+    }
+  }
+
+  @ApiOperation({ summary: '네이버 로그인' })
+  @Post('oauth-naver')
+  async oauthNaver(@Req() req: Request, @Body() body: AuthSignInOauthNaverDto, @Res() res: Response) {
+    try {
+      return this.userService.oauthNaver(body, res);
     } catch (e) {
       return e;
     }

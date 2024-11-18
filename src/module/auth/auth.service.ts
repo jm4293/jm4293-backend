@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '~/database/repository/user';
 import {
   AuthChangePasswordRequestDto,
   AuthFindEmailRequestDto,
+  AuthSignInOauthNaverDto,
   AuthSignInRequestDto,
   AuthSignUpRequestDto,
   AuthVerifyIdRequestDto,
@@ -17,8 +18,9 @@ import {
   ACCESS_TOKEN_TIME,
   REFRESH_TOKEN_COOKIE_TIME,
   REFRESH_TOKEN_TIME,
-} from '~/common/constant';
+} from 'src/constant';
 import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
@@ -176,6 +178,52 @@ export class AuthService {
     } catch (err) {
       throw AuthResponseDto.Fail('토큰이 만료되었습니다.');
     }
+  }
+
+  async oauthNaver(body: AuthSignInOauthNaverDto, res: Response) {
+    console.log('들어옴', body);
+    const response = await axios.get(`https://openapi.naver.com/v1/nid/me`, {
+      headers: {
+        Authorization: `Bearer ${body.accessToken}`,
+      },
+    });
+
+    const { email, name } = response.data.response;
+
+    const user = await this.userRepository.findUserByEmail(email);
+
+    if (!user) {
+      throw AuthResponseDto.Fail('일치하는 사용자가 없습니다.');
+    }
+
+    const accessToken = await this.generateToken(
+      { userSeq: user.userSeq, email: user.email, name: user.name },
+      ACCESS_TOKEN_TIME,
+    );
+    const refreshToken = await this.generateToken(
+      { userSeq: user.userSeq, email: user.email, name: user.name },
+      REFRESH_TOKEN_TIME,
+    );
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      // sameSite: 'strict',
+      maxAge: ACCESS_TOKEN_COOKIE_TIME,
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      // sameSite: 'strict',
+      maxAge: REFRESH_TOKEN_COOKIE_TIME,
+    });
+
+    // res.setHeader('Authorization', `Bearer ${accessToken}`);
+
+    const responseData = { email: user.email, name: user.name, accessToken, refreshToken };
+
+    console.log('responseData', responseData);
+
+    return res.send(AuthResponseDto.Success('로그인 성공', responseData));
   }
 
   private async generateToken(payload: { userSeq: number; email: string; name: string }, expiresIn: string) {
